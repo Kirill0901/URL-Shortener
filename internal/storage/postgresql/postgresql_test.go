@@ -13,7 +13,7 @@ var (
 	dbname   = flag.String("dbname", "postgres", "database name for postgresql")
 )
 
-func TestNewStorage(t *testing.T) {
+func TestStorage(t *testing.T) {
 
 	storage, err := New(*host, *port, *user, *password, *dbname)
 	if err != nil {
@@ -25,7 +25,7 @@ func TestNewStorage(t *testing.T) {
 		t.Fatal("Expected storage to be non-nil")
 	}
 
-	if err := storage.Db.Ping(); err != nil {
+	if err := storage.db.Ping(); err != nil {
 		t.Fatalf("Database connection is not alive: %v", err)
 	}
 

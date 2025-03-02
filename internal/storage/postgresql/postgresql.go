@@ -9,16 +9,16 @@ import (
 )
 
 type Storage struct {
-	Host     string
-	Port     int
-	Username string
-	Password string
-	Database string
-	Db       *sql.DB
+	host     string
+	port     int
+	user     string
+	password string
+	dbname   string
+	db       *sql.DB
 }
 
 func (s *Storage) execPrepare(script string) error {
-	stmt, err := s.Db.Prepare(script)
+	stmt, err := s.db.Prepare(script)
 	if err != nil {
 		return err
 	}
@@ -33,23 +33,23 @@ func (s *Storage) execPrepare(script string) error {
 
 func New(host string, port int, username, password, database string) (*Storage, error) {
 	s := &Storage{
-		Host:     host,
-		Port:     port,
-		Username: username,
-		Password: password,
-		Database: database,
+		host:     host,
+		port:     port,
+		user:     username,
+		password: password,
+		dbname:   database,
 	}
 
 	connStr := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
-		s.Host, s.Port, s.Username, s.Password, s.Database)
+		s.host, s.port, s.user, s.password, s.dbname)
 
 	var err error
-	s.Db, err = sql.Open("postgres", connStr)
+	s.db, err = sql.Open("postgres", connStr)
 	if err != nil {
 		return nil, err
 	}
 
-	if err = s.Db.Ping(); err != nil {
+	if err = s.db.Ping(); err != nil {
 		return nil, err
 	}
 
@@ -75,7 +75,7 @@ func New(host string, port int, username, password, database string) (*Storage, 
 }
 
 func (s *Storage) SaveURL(long_url, short_url string) error {
-	stmt, err := s.Db.Prepare("INSERT INTO url_shortener (long_url, short_url) VALUES ($1, $2)")
+	stmt, err := s.db.Prepare("INSERT INTO url_shortener (long_url, short_url) VALUES ($1, $2)")
 	if err != nil {
 		return err
 	}
@@ -88,7 +88,7 @@ func (s *Storage) SaveURL(long_url, short_url string) error {
 }
 
 func (s *Storage) GetURL(short_url string) (string, error) {
-	stmt, err := s.Db.Prepare("SELECT long_url FROM url_shortener WHERE short_url = $1")
+	stmt, err := s.db.Prepare("SELECT long_url FROM url_shortener WHERE short_url = $1")
 	if err != nil {
 		return "", err
 	}
@@ -104,5 +104,5 @@ func (s *Storage) GetURL(short_url string) (string, error) {
 }
 
 func (s *Storage) Close() error {
-	return s.Db.Close()
+	return s.db.Close()
 }

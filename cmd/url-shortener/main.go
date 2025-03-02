@@ -4,12 +4,13 @@ import (
 	"errors"
 	"flag"
 	"log"
+	"url-shortener/internal/storage/cache"
 	"url-shortener/internal/storage/postgresql"
 )
 
 type Storage interface {
-	//SaveURL(long_url, short_url string) error
-	//GetURL(short_url string) (string, error)
+	SaveURL(long_url, short_url string) error
+	GetURL(short_url string) (string, error)
 	Close() error
 }
 
@@ -28,7 +29,7 @@ func getStorage() (Storage, error) {
 		return postgresql.New(*host, *port, *user, *password, *dbname)
 
 	case "cache":
-		return nil, errors.New("cache is not implemented")
+		return cache.New(), nil
 	default:
 		return nil, errors.New("unknown storage type")
 	}
