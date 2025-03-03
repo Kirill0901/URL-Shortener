@@ -16,12 +16,12 @@ test_save:
 	go test -coverprofile=coverage.out  ./internal/http-server/handlers/url/save
 	go tool cover -html=coverage.out
 
-test_redirect:
-	go test -coverprofile=coverage.out  ./internal/http-server/handlers/url/redirect
+test_get:
+	go test -coverprofile=coverage.out  ./internal/http-server/handlers/url/get
 	go tool cover -html=coverage.out
 
 test_shortener:
 	go test -coverprofile=coverage.out  ./internal/shortener/
 	go tool cover -html=coverage.out
 
-test_all: test_postgres test_cache test_redirect test_save test_shortener
+test_all: test_postgres test_cache test_get test_save test_shortener

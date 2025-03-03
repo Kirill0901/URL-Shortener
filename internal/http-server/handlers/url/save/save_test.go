@@ -80,17 +80,14 @@ func TestSaveHandler(t *testing.T) {
 			err := handler(c)
 			require.NoError(t, err)
 
+			require.Equal(t, tc.statusCode, rec.Code)
+			body := rec.Body.String()
+			var resp save.Response
+			require.NoError(t, json.Unmarshal([]byte(body), &resp))
+
 			if tc.respError != "" {
-				require.Equal(t, tc.statusCode, rec.Code)
-				body := rec.Body.String()
-				var resp save.Response
-				require.NoError(t, json.Unmarshal([]byte(body), &resp))
 				require.Equal(t, tc.respError, resp.Message)
 			} else {
-				require.Equal(t, http.StatusOK, rec.Code)
-				body := rec.Body.String()
-				var resp save.Response
-				require.NoError(t, json.Unmarshal([]byte(body), &resp))
 				require.Equal(t, "Success", resp.Status)
 			}
 		})

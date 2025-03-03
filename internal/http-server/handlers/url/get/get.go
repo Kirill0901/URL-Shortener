@@ -1,4 +1,4 @@
-package redirect
+package get
 
 import (
 	"net/http"
@@ -14,6 +14,7 @@ type URLGetter interface {
 type Response struct {
 	Status  string `json:"status"`
 	Message string `json:"message"`
+	LongURL string `json:"long_url"`
 }
 
 func New(urlGetter URLGetter) echo.HandlerFunc {
@@ -42,6 +43,10 @@ func New(urlGetter URLGetter) echo.HandlerFunc {
 			})
 		}
 
-		return c.Redirect(http.StatusMovedPermanently, long_url)
+		return c.JSON(http.StatusOK, Response{
+			Status:  "Success",
+			Message: "Long URL is found",
+			LongURL: long_url,
+		})
 	}
 }

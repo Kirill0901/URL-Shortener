@@ -1,4 +1,4 @@
-package redirect_test
+package get_test
 
 import (
 	"encoding/json"
@@ -10,11 +10,11 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/require"
 
-	"url-shortener/internal/http-server/handlers/url/redirect"
-	"url-shortener/internal/http-server/handlers/url/redirect/mocks"
+	"url-shortener/internal/http-server/handlers/url/get"
+	"url-shortener/internal/http-server/handlers/url/get/mocks"
 )
 
-func TestRedirectHandler(t *testing.T) {
+func TestGetHandler(t *testing.T) {
 	cases := []struct {
 		name       string
 		httpMethod string
@@ -29,7 +29,7 @@ func TestRedirectHandler(t *testing.T) {
 			httpMethod: http.MethodGet,
 			shortURL:   "shorturl",
 			longURL:    "https://example.com",
-			statusCode: http.StatusMovedPermanently,
+			statusCode: http.StatusOK,
 		},
 		{
 			name:       "Empty Short URL",
@@ -64,7 +64,7 @@ func TestRedirectHandler(t *testing.T) {
 			urlGetterMock.On("GetURL", tc.shortURL).
 				Return(tc.longURL, tc.mockError).Maybe()
 
-			handler := redirect.New(urlGetterMock)
+			handler := get.New(urlGetterMock)
 
 			req := httptest.NewRequest(tc.httpMethod, "/"+tc.shortURL, nil)
 			rec := httptest.NewRecorder()
@@ -73,13 +73,15 @@ func TestRedirectHandler(t *testing.T) {
 			err := handler(c)
 			require.NoError(t, err)
 
+			require.Equal(t, tc.statusCode, rec.Code)
+			body := rec.Body.String()
+			var resp get.Response
+			require.NoError(t, json.Unmarshal([]byte(body), &resp))
+
 			if tc.respError != "" {
-				require.Equal(t, tc.statusCode, rec.Code)
-				body := rec.Body.String()
-				var resp redirect.Response
-				require.NoError(t, json.Unmarshal([]byte(body), &resp))
 				require.Equal(t, tc.respError, resp.Message)
 			} else {
+				require.Equal(t, tc.longURL, resp.LongURL)
 				require.Equal(t, tc.statusCode, rec.Code)
 			}
 		})
