@@ -4,6 +4,11 @@ run_postgres:
 run_cache:
 	go run ./cmd/url-shortener/main.go -storage=cache
 
+generate_mocks:
+	go run github.com/vektra/mockery/v2 --name=URLSaver --dir=./internal/http-server/handlers/url/save --output=./internal/http-server/handlers/url/save/mocks
+	go run github.com/vektra/mockery/v2 --name=URLGetter --dir=./internal/http-server/handlers/url/get --output=./internal/http-server/handlers/url/get/mocks
+	go run github.com/vektra/mockery/v2 --name=CountGetter --dir=./internal/shortener/ --output=./internal/shortener/mocks
+
 test_postgres:
 	go test -coverprofile=coverage.out  ./internal/storage/postgresql/ -host='172.31.204.125' -port=5432 -user=postgres -password=qwerty -dbname=gopgtest
 	go tool cover -html=coverage.out
