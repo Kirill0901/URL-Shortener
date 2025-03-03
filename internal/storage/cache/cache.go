@@ -24,11 +24,11 @@ func New() *Cache {
 func (c *Cache) SaveURL(long_url, short_url string) error {
 	c.rowMu.Lock()
 
-	if _, ok := c.rows[long_url]; ok {
+	if _, ok := c.rows[short_url]; ok {
 		return ErrURLExists
 	}
 
-	c.rows[long_url] = short_url
+	c.rows[short_url] = long_url
 
 	c.rowMu.Unlock()
 	return nil

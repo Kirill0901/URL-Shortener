@@ -1,8 +1,12 @@
 package shortener
 
+import "sync"
+
 var count int64 = 0
 
-var alph = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_"
+var alph = "abcdefghijklmnopqrstuvwxyz0123456789_ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+var cntMx sync.Mutex
 
 type CountGetter interface {
 	GetCount() (int64, error)
@@ -24,6 +28,8 @@ func CountInit(countGetter CountGetter) error {
 func MakeShorter(long_url string) (string, error) {
 	short_url := ""
 
+	cntMx.Lock()
+
 	n := count
 
 	for i := 0; i < 10; i++ {
@@ -32,6 +38,8 @@ func MakeShorter(long_url string) (string, error) {
 	}
 
 	count += 1
+
+	cntMx.Unlock()
 
 	return short_url, nil
 }

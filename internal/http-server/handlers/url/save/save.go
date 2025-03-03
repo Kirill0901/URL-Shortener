@@ -7,7 +7,6 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-//go:generate go run github.com/vektra/mockery/v2@v2.53 -all
 type URLSaver interface {
 	SaveURL(long_url, short_url string) error
 }
@@ -17,9 +16,9 @@ type Request struct {
 }
 
 type Response struct {
-	Status   string `json: "status"`
-	Message  string `json: "message"`
-	ShortURL string `json: "short_url"`
+	Status   string `json:"status"`
+	Message  string `json:"message"`
+	ShortURL string `json:"short_url"`
 }
 
 func New(urlSaver URLSaver) echo.HandlerFunc {

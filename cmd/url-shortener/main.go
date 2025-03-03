@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"url-shortener/internal/http-server/handlers/url/redirect"
 	"url-shortener/internal/http-server/handlers/url/save"
 	"url-shortener/internal/shortener"
 	"url-shortener/internal/storage"
@@ -27,7 +28,8 @@ func main() {
 
 	e := echo.New()
 
-	e.POST("/save_url", save.New(storage))
+	e.POST("/", save.New(storage))
+	e.GET("/*", redirect.New(storage))
 
 	err = e.Start(":12000")
 	if err != nil {

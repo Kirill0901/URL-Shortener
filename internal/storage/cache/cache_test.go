@@ -8,14 +8,14 @@ func TestCache(t *testing.T) {
 
 	defer cache.Close()
 
-	cache.SaveURL("key1", "value1")
-	cache.SaveURL("key2", "value2")
+	cache.SaveURL("long1", "short1")
+	cache.SaveURL("long2", "short2")
 
-	item, err := cache.GetURL("key1")
+	item, err := cache.GetURL("short1")
 
 	if err != nil {
 		t.Errorf("Failed to retrieve item from cache")
-	} else if item != "value1" {
+	} else if item != "long1" {
 		t.Errorf("Incorrect value retrieved from cache")
 	}
 
