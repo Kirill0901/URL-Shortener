@@ -47,6 +47,10 @@ func (c *Cache) GetURL(short_url string) (string, error) {
 	return long_url, nil
 }
 
+func (c *Cache) GetCount() (int64, error) {
+	return int64(len(c.rows)), nil
+}
+
 func (c *Cache) Close() error {
 	for k := range c.rows {
 		delete(c.rows, k)

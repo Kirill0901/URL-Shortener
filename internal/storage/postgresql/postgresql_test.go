@@ -38,4 +38,9 @@ func TestStorage(t *testing.T) {
 	if err != nil || long_url != "myFirstUrl" {
 		t.Errorf("Failed to get URL: %v", err)
 	}
+
+	cnt, err := storage.GetCount()
+	if err != nil || cnt != 1 {
+		t.Errorf("Failed to get count: %v", err)
+	}
 }

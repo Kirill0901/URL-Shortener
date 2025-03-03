@@ -84,7 +84,7 @@ func (s *Storage) SaveURL(long_url, short_url string) error {
 		return err
 	}
 
-	return err
+	return nil
 }
 
 func (s *Storage) GetURL(short_url string) (string, error) {
@@ -101,6 +101,22 @@ func (s *Storage) GetURL(short_url string) (string, error) {
 
 	return long_url, nil
 
+}
+
+func (s *Storage) GetCount() (int64, error) {
+
+	stmt, err := s.db.Prepare("SELECT COUNT(*) FROM url_shortener")
+	if err != nil {
+		return 0, err
+	}
+
+	var count int64
+	err = stmt.QueryRow().Scan(&count)
+	if err != nil {
+		return 0, err
+	}
+
+	return count, err
 }
 
 func (s *Storage) Close() error {

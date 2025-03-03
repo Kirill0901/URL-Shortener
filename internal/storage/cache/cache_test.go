@@ -18,4 +18,9 @@ func TestCache(t *testing.T) {
 	} else if item != "value1" {
 		t.Errorf("Incorrect value retrieved from cache")
 	}
+
+	cnt, err := cache.GetCount()
+	if err != nil || cnt != 2 {
+		t.Errorf("Incorrect count of items in cache")
+	}
 }
