@@ -18,13 +18,14 @@ import (
 
 func TestSaveHandler(t *testing.T) {
 	cases := []struct {
-		name       string
-		httpMethod string
-		longURL    string
-		shortURL   string
-		statusCode int
-		respError  string
-		mockError  error
+		name               string
+		httpMethod         string
+		longURL            string
+		shortURL           string
+		existing_short_url string
+		statusCode         int
+		respError          string
+		mockError          error
 	}{
 		{
 			name:       "Success",
@@ -32,6 +33,14 @@ func TestSaveHandler(t *testing.T) {
 			longURL:    "https://google.com",
 			shortURL:   "aaaaaaaaaa",
 			statusCode: http.StatusOK,
+		},
+		{
+			name:               "Success",
+			httpMethod:         http.MethodPost,
+			longURL:            "https://google.com",
+			shortURL:           "baaaaaaaaa",
+			existing_short_url: "aaaaaaaaaa",
+			statusCode:         http.StatusOK,
 		},
 		{
 			name:       "Empty URL",
@@ -44,7 +53,7 @@ func TestSaveHandler(t *testing.T) {
 			name:       "SaveURL Error",
 			httpMethod: http.MethodPost,
 			longURL:    "https://google.com",
-			shortURL:   "baaaaaaaaa",
+			shortURL:   "caaaaaaaaa",
 			statusCode: http.StatusInternalServerError,
 			respError:  "Internal server error",
 			mockError:  errors.New("unexpected error"),
@@ -65,7 +74,7 @@ func TestSaveHandler(t *testing.T) {
 			urlSaverMock := mocks.NewURLSaver(t)
 
 			urlSaverMock.On("SaveURL", tc.longURL, tc.shortURL).
-				Return(tc.mockError).Maybe()
+				Return(tc.existing_short_url, tc.mockError).Maybe()
 
 			handler := save.New(urlSaverMock)
 

@@ -10,21 +10,31 @@ type URLSaver struct {
 }
 
 // SaveURL provides a mock function with given fields: long_url, short_url
-func (_m *URLSaver) SaveURL(long_url string, short_url string) error {
+func (_m *URLSaver) SaveURL(long_url string, short_url string) (string, error) {
 	ret := _m.Called(long_url, short_url)
 
 	if len(ret) == 0 {
 		panic("no return value specified for SaveURL")
 	}
 
-	var r0 error
-	if rf, ok := ret.Get(0).(func(string, string) error); ok {
+	var r0 string
+	var r1 error
+	if rf, ok := ret.Get(0).(func(string, string) (string, error)); ok {
+		return rf(long_url, short_url)
+	}
+	if rf, ok := ret.Get(0).(func(string, string) string); ok {
 		r0 = rf(long_url, short_url)
 	} else {
-		r0 = ret.Error(0)
+		r0 = ret.Get(0).(string)
 	}
 
-	return r0
+	if rf, ok := ret.Get(1).(func(string, string) error); ok {
+		r1 = rf(long_url, short_url)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
 }
 
 // NewURLSaver creates a new instance of URLSaver. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.

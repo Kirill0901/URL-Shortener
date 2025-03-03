@@ -8,7 +8,7 @@ import (
 )
 
 type URLSaver interface {
-	SaveURL(long_url, short_url string) error
+	SaveURL(long_url, short_url string) (string, error)
 }
 
 type Request struct {
@@ -49,7 +49,7 @@ func New(urlSaver URLSaver) echo.HandlerFunc {
 			})
 		}
 
-		err = urlSaver.SaveURL(request.LongURL, short_url)
+		short_url, err = urlSaver.SaveURL(request.LongURL, short_url)
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, Response{
 				Status:   "Error",

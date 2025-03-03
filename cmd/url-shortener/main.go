@@ -15,15 +15,13 @@ func main() {
 	storage, err := storage.GetStorage()
 	if err != nil {
 		log.Fatal(err)
-		return
 	}
 
 	defer storage.Close()
 
-	err = shortener.CountInit(storage)
+	err = shortener.Init(storage)
 	if err != nil {
 		log.Fatal(err)
-		return
 	}
 
 	e := echo.New()

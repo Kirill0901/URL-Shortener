@@ -70,21 +70,52 @@ func New(host string, port int, username, password, database string) (*Storage, 
 		return nil, err
 	}
 
+	err = s.execPrepare(`
+		CREATE INDEX IF NOT EXISTS idx_long_url ON url_shortener(long_url);
+	`)
+	if err != nil {
+		return nil, err
+	}
+
 	log.Println("Successfully connected to PostgreSQL")
 	return s, nil
 }
 
-func (s *Storage) SaveURL(long_url, short_url string) error {
+func (s *Storage) GetShortURL(long_url string) (string, error) {
+
+	stmt, err := s.db.Prepare("SELECT short_url FROM url_shortener WHERE long_url = $1")
+	if err != nil {
+		return "", err
+	}
+
+	var short_url string
+	err = stmt.QueryRow(long_url).Scan(&short_url)
+	if err != nil {
+		return "", err
+	}
+
+	return short_url, nil
+}
+
+func (s *Storage) SaveURL(long_url, short_url string) (string, error) {
+
+	existing_short_url, err := s.GetShortURL(long_url)
+	if err == nil {
+		return existing_short_url, nil
+	} else if err != sql.ErrNoRows {
+		return "", err
+	}
+
 	stmt, err := s.db.Prepare("INSERT INTO url_shortener (long_url, short_url) VALUES ($1, $2)")
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	if _, err = stmt.Exec(long_url, short_url); err != nil {
-		return err
+		return "", err
 	}
 
-	return nil
+	return short_url, nil
 }
 
 func (s *Storage) GetURL(short_url string) (string, error) {

@@ -8,7 +8,7 @@ import (
 )
 
 type Storage interface {
-	SaveURL(long_url, short_url string) error
+	SaveURL(long_url, short_url string) (string, error)
 	GetURL(short_url string) (string, error)
 	GetCount() (int64, error)
 	Close() error

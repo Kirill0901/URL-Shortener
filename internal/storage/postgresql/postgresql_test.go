@@ -29,9 +29,20 @@ func TestStorage(t *testing.T) {
 		t.Fatalf("Database connection is not alive: %v", err)
 	}
 
-	err = storage.SaveURL("myFirstUrl", "myFirstShort")
+	myFirstShort := "myFirstShort"
+
+	_, err = storage.SaveURL("myFirstUrl", myFirstShort)
 	if err != nil {
 		t.Errorf("Failed to save URL: %v", err)
+	}
+
+	short_url, err := storage.SaveURL("myFirstUrl", "mySecondShort")
+	if err != nil {
+		t.Errorf("Failed to save URL: %v", err)
+	}
+
+	if short_url != myFirstShort {
+		t.Errorf("Expected short URL to be 'myFirstShort', got '%s'", short_url)
 	}
 
 	long_url, err := storage.GetURL("myFirstShort")

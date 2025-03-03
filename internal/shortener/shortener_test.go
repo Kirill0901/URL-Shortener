@@ -13,7 +13,7 @@ func TestCountInit_ValidCountGetter(t *testing.T) {
 	mockCountGetter := mocks.NewCountGetter(t)
 	mockCountGetter.On("GetCount").Return(int64(5), nil)
 
-	err := CountInit(mockCountGetter)
+	err := Init(mockCountGetter)
 	assert.NoError(t, err)
 	assert.Equal(t, int64(5), count)
 }
@@ -22,7 +22,7 @@ func TestCountInit_ErrorFromCountGetter(t *testing.T) {
 	mockCountGetter := mocks.NewCountGetter(t)
 	mockCountGetter.On("GetCount").Return(int64(0), errors.New("some error"))
 
-	err := CountInit(mockCountGetter)
+	err := Init(mockCountGetter)
 	assert.Error(t, err)
 	assert.Equal(t, "some error", err.Error())
 	assert.Equal(t, int64(0), count)
@@ -32,7 +32,7 @@ func TestMakeShorter(t *testing.T) {
 	mockCountGetter := mocks.NewCountGetter(t)
 	mockCountGetter.On("GetCount").Return(int64(0), nil)
 
-	_ = CountInit(mockCountGetter)
+	_ = Init(mockCountGetter)
 	shortURL, err := MakeShorter("http://example.com")
 	assert.NoError(t, err)
 	assert.Equal(t, "aaaaaaaaaa", shortURL)
@@ -42,7 +42,7 @@ func TestMakeShorter_AfterCountInit(t *testing.T) {
 	mockCountGetter := mocks.NewCountGetter(t)
 	mockCountGetter.On("GetCount").Return(int64(1), nil)
 
-	_ = CountInit(mockCountGetter)
+	_ = Init(mockCountGetter)
 	shortURL1, _ := MakeShorter("http://example.com")
 	shortURL2, _ := MakeShorter("http://example.com")
 	assert.Equal(t, "baaaaaaaaa", shortURL1)
